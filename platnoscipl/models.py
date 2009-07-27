@@ -20,6 +20,9 @@ def gen_ts():
     else:
         return str(time.time())
 
+# Silly hack to re-use Django's date parsing magic
+parse_datetime = models.DateTimeField().to_python
+
 class CurrentPaymentManager(models.Manager):
     def get_query_set(self):
         return super(CurrentPaymentManager, self) \
@@ -67,20 +70,20 @@ class CurrentPaymentManager(models.Manager):
                 return f.text or None
         rv = self.model(
             transaction_id = _f('id'),
-            pos_id = _f('pos_id'),
+            pos_id = int(_f('pos_id')),
             session_id = _f('session_id'),
             order_id = _f('order_id'),
-            amount = _f('amount'),
-            status = _f('status'),
+            amount = int(_f('amount')),
+            status = int(_f('status')),
             pay_type = _f('pay_type'),
             pay_gw_name = _f('pay_gw_name'),
             desc = _f('desc'),
             desc2 = _f('desc2'),
-            create = _f('create'),
-            init = _f('init'),
-            sent = _f('sent'),
-            recv = _f('recv'),
-            cancel = _f('cancel'),
+            create = parse_datetime(_f('create')),
+            init = parse_datetime(_f('init')),
+            sent = parse_datetime(_f('sent')),
+            recv = parse_datetime(_f('recv')),
+            cancel = parse_datetime(_f('cancel')),
             auth_fraud = _f('auth_fraud'),
             ts = _f('ts'),
             sig = _f('sig'),
