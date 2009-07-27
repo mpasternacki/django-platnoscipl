@@ -64,7 +64,6 @@ class CurrentPaymentManager(models.Manager):
             f = et[1].find(path)
             if f is not None:
                 return f.text or None
-        print self.model
         rv = self.model(
             transaction_id = _f('id'),
             pos_id = _f('pos_id'),
