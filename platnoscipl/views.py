@@ -1,6 +1,6 @@
 # -*- python; coding: utf-8 -*-
 
-import md5
+import hashlib
 
 from django.http import HttpResponse, HttpResponseRedirect, \
      HttpResponseForbidden
@@ -50,11 +50,11 @@ def notification_handler(request):
 
     # FIXME: do something sensible
     assert int(request.POST['pos_id']) == int(conf.POS_ID)
-    assert request.post['sig'] == md5.md5('%s%s%s%s' % (
+    assert request.POST['sig'] == hashlib.md5('%s%s%s%s' % (
         conf.POS_ID,
         request.POST['session_id'],
         request.POST['ts'],
-        conf.KEY2))
+        conf.KEY2)).hexdigest()
 
     payment = models.Payment.objects.get_or_create(
         session_id=request.POST['session_id'])

@@ -1,5 +1,5 @@
 # -*- python; coding: utf-8 -*-
-import md5
+import hashlib
 
 try:
     from decimal import Decimal
@@ -108,7 +108,7 @@ class PlatnosciPlForm(forms.Form):
 
         self.initial['ts'] = gen_ts()
 
-        self.initial['sig'] = md5.md5(''.join((
+        self.initial['sig'] = hashlib.md5(''.join((
             str(conf.POS_ID),
             _parm('pay_type'),
             _parm('session_id'),

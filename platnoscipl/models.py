@@ -57,7 +57,7 @@ class Payment(models.Model):
     add_testid = models.CharField(max_length=255, null=True, blank=True)
 
     def get_signature(self):
-        return md5.md5(''.join((
+        return hashlib.md5(''.join((
             str(self.pos_id),
             self.session_id,
             str(self.order_id),
