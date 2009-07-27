@@ -15,6 +15,7 @@ except ImportError:
 
 from django import forms
 from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext as _
 
 import conf
 import constants
@@ -141,7 +142,7 @@ class PlatnosciPlForm(forms.Form):
                 missing.append(name)
         if missing:
             raise ValueError(
-                "Following fields are required: %s." % ', '.join(missing))
+                _("Following fields are required: %s.") % ', '.join(missing))
 
     def get_session_id(self):
         return self.initial['session_id']
@@ -149,5 +150,6 @@ class PlatnosciPlForm(forms.Form):
     def render(self):
         return mark_safe(u"""<form action="%sNewPayment" method="POST">
     %s
-    <input type="submit" value="Zapłać poprzez Platnosci.pl" />
-    </form>""" % (conf.ENDPOINT, self.as_p(), ))
+    <input type="submit" value="%s" />
+    </form>""" % (conf.ENDPOINT, self.as_p(),
+                  _("Pay with platnosci.pl")))

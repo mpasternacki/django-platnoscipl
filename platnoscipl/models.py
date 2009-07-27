@@ -9,6 +9,7 @@ except ImportError:
     uuid = None
 
 from django.db import models
+from django.utils.translation import ugettext, ugettext_lazy as _
 
 import conf
 import constants
@@ -112,47 +113,51 @@ class CurrentPaymentManager(models.Manager):
         return rv, instance
 
 class Payment(models.Model):
+    class Meta:
+        verbose_name=_("payment")
+        verbose_name_plural=_("payments")
+
     all_objects = models.Manager()
     objects = CurrentPaymentManager()
 
     # bookkeeping
-    is_current = models.BooleanField(default=True)
-    timestamp = models.DateTimeField(auto_now=True)
+    is_current = models.BooleanField(_("is current"), default=True)
+    timestamp = models.DateTimeField(_("timestamp"), auto_now=True)
 
     # platnosci.pl info
-    transaction_id = models.CharField(max_length=255)
-    pos_id = models.IntegerField()
-    session_id = models.CharField(max_length=1024)
+    transaction_id = models.CharField(_("transaction id"), max_length=255)
+    pos_id = models.IntegerField(_("POS ID"))
+    session_id = models.CharField(_("session id"), max_length=1024)
     if conf.ORDER_MODEL:
-        order = models.ForeignKey(conf.ORDER_MODEL)
+        order = models.ForeignKey(conf.ORDER_MODEL, verbose_name=_("order"))
     else:
-        order_id = models.CharField(max_length=255)
-    amount = models.IntegerField()
-    status = models.IntegerField(choices=constants.STATUS_NAMES.items())
-    pay_type = models.CharField(max_length=2,
+        order_id = models.CharField(_("order id"), max_length=255)
+    amount = models.IntegerField(_("amount, in grosz"))
+    status = models.IntegerField(_("status"), choices=constants.STATUS_NAMES.items())
+    pay_type = models.CharField(_("payment type"), max_length=2,
                                 choices=constants.PAY_TYPES.items())
-    pay_gw_name = models.CharField(max_length=64)
-    desc = models.CharField(max_length=1024)
-    desc2 = models.CharField(max_length=1024, null=True, blank=True)
-    create = models.DateTimeField()
-    init = models.DateTimeField(null=True, blank=True)
-    sent = models.DateTimeField(null=True, blank=True)
-    recv = models.DateTimeField(null=True, blank=True)
-    cancel = models.DateTimeField(null=True, blank=True)
-    auth_fraud = models.CharField(max_length=255)
-    ts = models.CharField(max_length=255)
-    sig = models.CharField(max_length=32)
-    add_cc_number_hash = models.CharField(max_length=255, null=True, blank=True)
-    add_cc_bin = models.CharField(max_length=255, null=True, blank=True)
-    add_cc_number = models.CharField(max_length=255, null=True, blank=True)
-    add_owner_name = models.CharField(max_length=255, null=True, blank=True)
-    add_owner_address = models.CharField(max_length=255, null=True, blank=True)
-    add_trans_title = models.CharField(max_length=255, null=True, blank=True)
-    add_bank_name = models.CharField(max_length=255, null=True, blank=True)
-    add_trans_prev = models.CharField(max_length=255, null=True, blank=True)
-    add_trans_add_desc = models.CharField(max_length=255, null=True, blank=True)
-    add_test = models.CharField(max_length=1, null=True, blank=True)
-    add_testid = models.CharField(max_length=255, null=True, blank=True)
+    pay_gw_name = models.CharField(_("payment gateway name (internal)"), max_length=64)
+    desc = models.CharField(_("description"), max_length=1024)
+    desc2 = models.CharField(_("description 2"), max_length=1024, null=True, blank=True)
+    create = models.DateTimeField(_("create timestamp"))
+    init = models.DateTimeField(_("init timestamp"), null=True, blank=True)
+    sent = models.DateTimeField(_("sent timestamp"), null=True, blank=True)
+    recv = models.DateTimeField(_("receive timestamp"), null=True, blank=True)
+    cancel = models.DateTimeField(_("cancel timestamp"), null=True, blank=True)
+    auth_fraud = models.CharField(_("auth fraud info (internal)"), max_length=255)
+    ts = models.CharField(_("timestamp (for signature)"), max_length=255)
+    sig = models.CharField(_("signature"), max_length=32)
+    add_cc_number_hash = models.CharField(_("sender bank account number hash"), max_length=255, null=True, blank=True)
+    add_cc_bin = models.CharField(_("sendar bank id"), max_length=255, null=True, blank=True)
+    add_cc_number = models.CharField(_("sender bank account number"), max_length=255, null=True, blank=True)
+    add_owner_name = models.CharField(_("recipient name"), max_length=255, null=True, blank=True)
+    add_owner_address = models.CharField(_("recipient address"), max_length=255, null=True, blank=True)
+    add_trans_title = models.CharField(_("transfer title"), max_length=255, null=True, blank=True)
+    add_bank_name = models.CharField(_("bank name"), max_length=255, null=True, blank=True)
+    add_trans_prev = models.CharField(_("transfer preview"), max_length=255, null=True, blank=True)
+    add_trans_add_desc = models.CharField(_("transfer description"), max_length=255, null=True, blank=True)
+    add_test = models.CharField(_("test payment marker"), max_length=1, null=True, blank=True)
+    add_testid = models.CharField(_("test transaction id"), max_length=255, null=True, blank=True)
 
     def __unicode__(self):
         return self.session_id
