@@ -1,4 +1,3 @@
-import hashlib
 import urllib
 import urllib2
 import xml.etree.ElementTree as ET # FIXME: proper import cascade for older pythons
@@ -13,6 +12,7 @@ from django.db import models
 
 import conf
 import constants
+from utils import sig
 
 def gen_ts():
     if uuid is not None:
@@ -33,11 +33,12 @@ class CurrentPaymentManager(models.Manager):
             'session_id': session_id,
             'ts': ts,
             }
-        data['sig'] = hashlib.md5(
-            data['pos_id']
-            + data['session_id']
-            + data['ts']
-            + conf.KEY1).hexdigest()
+        data['sig'] = sig(
+            data['pos_id'],
+            data['session_id'],
+            data['ts'],
+            conf.KEY1,
+            )
 
         return urllib2.urlopen(
             '%sPayment/%s/xml' % (conf.ENDPOINT, method),
@@ -157,16 +158,16 @@ class Payment(models.Model):
         return bool(self.id)
 
     def get_signature(self):
-        return hashlib.md5(''.join((
-            str(self.pos_id),
+        return sig(
+            self.pos_id,
             self.session_id,
-            str(self.order_id),
-            str(self.status),
-            str(self.amount),
-            self.desc.encode('utf-8'),
+            self.order_id,
+            self.status,
+            self.amount,
+            self.desc,
             self.ts,
             conf.KEY2,
-            ))).hexdigest()
+            )
 
     def get_amount_display(self):
         return self.amount / 100.       # FIXME:decimal
@@ -184,17 +185,16 @@ class Payment(models.Model):
         assert self.status == constants.STATE_WAITING_FOR_ACCEPT
 
         et = ET.fromstring(self.rpc('confirm'))
-        return et
         assert et[0].text == 'OK'       # FIXME: handle errors
 
-        assert et[1].find('pos_id') == self.pos_id
-        assert et[1].find('session_id') == self.session_id
-        assert hashlib.md5(''.join(
-            str(self.pos_id),
+        assert int(et[1].find('pos_id').text) == int(self.pos_id)
+        assert et[1].find('session_id').text == self.session_id
+        assert sig(
+            self.pos_id,
             self.session_id,
-            et[1].find('ts'),
+            et[1].find('ts').text,
             conf.KEY2,
-            )).hexdigest() == et[1].find('sig')
+            ) == et[1].find('sig').text
 
         if reload:
             return self.reload()

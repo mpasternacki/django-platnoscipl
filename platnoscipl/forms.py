@@ -1,6 +1,4 @@
 # -*- python; coding: utf-8 -*-
-import hashlib
-
 try:
     from decimal import Decimal
 except ImportError:
@@ -21,6 +19,7 @@ from django.utils.safestring import mark_safe
 import conf
 import constants
 from models import gen_ts
+from utils import sig
 
 
 class ValueHiddenInput(forms.HiddenInput): # from django-paypal
@@ -104,12 +103,12 @@ class PlatnosciPlForm(forms.Form):
                 _sid[0:4], _sid[4:8], _sid[8:12], _sid[12:16], )
 
         def _parm(name):
-            return str(self.initial.get(name, ''))
+            return self.initial.get(name, '')
 
         self.initial['ts'] = gen_ts()
 
-        self.initial['sig'] = hashlib.md5(''.join((
-            str(conf.POS_ID),
+        self.initial['sig'] = sig(
+            conf.POS_ID,
             _parm('pay_type'),
             _parm('session_id'),
             conf.POS_AUTH_KEY,
@@ -133,7 +132,7 @@ class PlatnosciPlForm(forms.Form):
             _parm('client_ip'),
             _parm('ts'),
             conf.KEY1,
-            ))).hexdigest()
+            )
 
         missing = []
         for name, field in self.fields.items():

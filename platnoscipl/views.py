@@ -1,7 +1,5 @@
 # -*- python; coding: utf-8 -*-
 
-import hashlib
-
 from django.http import HttpResponse, HttpResponseRedirect, \
      HttpResponseForbidden
 from django.views.generic.simple import direct_to_template
@@ -10,7 +8,7 @@ import conf
 import constants
 import models
 import signals
-
+from utils import sig
 
 def confirmation_screen(request,
                         template='platnoscipl/confirm.html',
@@ -49,11 +47,11 @@ def notification_handler(request):
 
     # FIXME: do something sensible
     assert int(request.POST['pos_id']) == int(conf.POS_ID)
-    assert request.POST['sig'] == hashlib.md5('%s%s%s%s' % (
+    assert request.POST['sig'] == sig(
         conf.POS_ID,
         request.POST['session_id'],
         request.POST['ts'],
-        conf.KEY2)).hexdigest()
+        conf.KEY2)
 
     new_payment, old_payment = \
                  models.Payment.objects.reload(request.POST['session_id'])
