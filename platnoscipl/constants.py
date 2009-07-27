@@ -34,7 +34,7 @@ ERR_TRANSACTION_CANCELLED = 504
 ERR_TRANSACTION_ALREADY_SENT_TO_ACCEPT = 505
 ERR_TRANSACTION_ALREADY_ACCEPTED = 506
 ERR_RETURNING_PAYMENT = 507
-ERR_INVALID_STATE = 599
+ERR_INVALID_STATUS = 599
 ERR_CRITICAL_OTHER = 999
 
 ERR_MESSAGES = {
@@ -78,30 +78,30 @@ ERR_MESSAGES = {
     u" do odbioru wcześniej",
     ERR_TRANSACTION_ALREADY_ACCEPTED: u"transakcja już odebrana",
     ERR_RETURNING_PAYMENT: u"błąd podczas zwrotu środków do klienta",
-    ERR_INVALID_STATE: u"błędny stan transakcji, np. nie można uznać"
+    ERR_INVALID_STATUS: u"błędny stan transakcji, np. nie można uznać"
     u" transakcji kilka razy lub inny, prosimy o kontakt",
     ERR_CRITICAL_OTHER: u"inny błąd krytyczny - prosimy o kontakt",
 }
 
 # transaction states
-STATE_NEW = 1
-STATE_CANCELLED = 2
-STATE_REJECTED = 3
-STATE_OPEN = 4
-STATE_WAITING_FOR_ACCEPT = 5
-STATE_PAYMENT_REJECTED = 7
-STATE_ACCEPTED = 99
-STATE_ERROR = 888
+STATUS_NEW = 1
+STATUS_CANCELLED = 2
+STATUS_REJECTED = 3
+STATUS_OPEN = 4
+STATUS_WAITING_FOR_ACCEPT = 5
+STATUS_PAYMENT_REJECTED = 7
+STATUS_ACCEPTED = 99
+STATUS_ERROR = 888
 
-STATE_NAMES = {
-    STATE_NEW: u"nowa",
-    STATE_CANCELLED: u"anulowana",
-    STATE_REJECTED: u"odrzucona",
-    STATE_OPEN: u"rozpoczęta",
-    STATE_WAITING_FOR_ACCEPT: u"oczekuje na odbiór",
-    STATE_PAYMENT_REJECTED: u"płatność odrzucona",
-    STATE_ACCEPTED: u"płatność odebrana - zakończona",
-    STATE_ERROR: u"błędny status - prosimy o kontakt",
+STATUS_NAMES = {
+    STATUS_NEW: u"nowa",
+    STATUS_CANCELLED: u"anulowana",
+    STATUS_REJECTED: u"odrzucona",
+    STATUS_OPEN: u"rozpoczęta",
+    STATUS_WAITING_FOR_ACCEPT: u"oczekuje na odbiór",
+    STATUS_PAYMENT_REJECTED: u"płatność odrzucona",
+    STATUS_ACCEPTED: u"płatność odebrana - zakończona",
+    STATUS_ERROR: u"błędny status - prosimy o kontakt",
     -1: u'brak',
     }
 

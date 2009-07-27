@@ -125,7 +125,7 @@ class Payment(models.Model):
     else:
         order_id = models.CharField(max_length=255)
     amount = models.IntegerField()
-    status = models.IntegerField(choices=constants.STATE_NAMES.items())
+    status = models.IntegerField(choices=constants.STATUS_NAMES.items())
     pay_type = models.CharField(max_length=2,
                                 choices=constants.PAY_TYPES.items())
     pay_gw_name = models.CharField(max_length=64)
@@ -182,7 +182,7 @@ class Payment(models.Model):
         return self.__class__.objects.rpc(self.session_id, method)
 
     def _confirm_or_cancel(self, method, reload):
-        assert self.status == constants.STATE_WAITING_FOR_ACCEPT
+        assert self.status == constants.STATUS_WAITING_FOR_ACCEPT
 
         et = ET.fromstring(self.rpc('confirm'))
         assert et[0].text == 'OK'       # FIXME: handle errors
