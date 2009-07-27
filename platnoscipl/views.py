@@ -9,6 +9,7 @@ from django.views.generic.simple import direct_to_template
 import conf
 import constants
 import models
+import signals
 
 
 def confirmation_screen(request,
@@ -55,7 +56,8 @@ def notification_handler(request):
         conf.KEY2)).hexdigest()
 
     new_payment, old_payment = \
-                 models.Payment.objects.update(request.POST['session_id'])
-    print new_payment, old_payment
+                 models.Payment.objects.reload(request.POST['session_id'])
+
+    signals.payment_status_notification.send(new_payment, previous=old_payment)
 
     return HttpResponse('OK')
