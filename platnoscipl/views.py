@@ -54,9 +54,8 @@ def notification_handler(request):
         request.POST['ts'],
         conf.KEY2)).hexdigest()
 
-    payment = models.Payment.objects.get_or_create(
-        session_id=request.POST['session_id'])
-    payment.update()
-    payment.save()
+    new_payment, old_payment = \
+                 models.Payment.objects.update(request.POST['session_id'])
+    print new_payment, old_payment
 
     return HttpResponse('OK')
