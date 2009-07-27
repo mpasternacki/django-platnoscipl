@@ -1,0 +1,12 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}{{block.super}}{% if platnoscipl_urls %}
+<dl>
+ <dt>Adres powrotu błędnego</dt>
+ <dd>{{platnoscipl_urls.fail}}</dd>
+ <dt>Adres powrotu pozytywnego</dt>
+ <dd>{{platnoscipl_urls.ok}}</dd>
+ <dt>Adres raportów</dt>
+ <dd>{{platnoscipl_urls.notify}}</dd>
+</dl>
+{% endif %}{% endblock %}
