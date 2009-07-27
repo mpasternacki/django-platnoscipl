@@ -32,7 +32,7 @@ ERR_TRANSACTION_ALREADY_OPEN = 502
 ERR_TRANSACTION_ALREADY_AUTHORISED = 503
 ERR_TRANSACTION_CANCELLED = 504
 ERR_TRANSACTION_ALREADY_SENT_TO_ACCEPT = 505
-ERR_TRANSACTION_ALREADY_ACCEPTED = 506
+ERR_TRANSACTION_ALREADY_CONFIRMED = 506
 ERR_RETURNING_PAYMENT = 507
 ERR_INVALID_STATUS = 599
 ERR_CRITICAL_OTHER = 999
@@ -76,7 +76,7 @@ ERR_MESSAGES = {
     ERR_TRANSACTION_CANCELLED: u"transakcja anulowana wcześniej",
     ERR_TRANSACTION_ALREADY_SENT_TO_ACCEPT: u"transakcja przekazana"
     u" do odbioru wcześniej",
-    ERR_TRANSACTION_ALREADY_ACCEPTED: u"transakcja już odebrana",
+    ERR_TRANSACTION_ALREADY_CONFIRMED: u"transakcja już odebrana",
     ERR_RETURNING_PAYMENT: u"błąd podczas zwrotu środków do klienta",
     ERR_INVALID_STATUS: u"błędny stan transakcji, np. nie można uznać"
     u" transakcji kilka razy lub inny, prosimy o kontakt",
@@ -90,7 +90,7 @@ STATUS_REJECTED = 3
 STATUS_OPEN = 4
 STATUS_WAITING_FOR_ACCEPT = 5
 STATUS_PAYMENT_REJECTED = 7
-STATUS_ACCEPTED = 99
+STATUS_CONFIRMED = 99
 STATUS_ERROR = 888
 
 STATUS_NAMES = {
@@ -100,7 +100,7 @@ STATUS_NAMES = {
     STATUS_OPEN: u"rozpoczęta",
     STATUS_WAITING_FOR_ACCEPT: u"oczekuje na odbiór",
     STATUS_PAYMENT_REJECTED: u"płatność odrzucona",
-    STATUS_ACCEPTED: u"płatność odebrana - zakończona",
+    STATUS_CONFIRMED: u"płatność odebrana - zakończona",
     STATUS_ERROR: u"błędny status - prosimy o kontakt",
     -1: u'brak',
     }
