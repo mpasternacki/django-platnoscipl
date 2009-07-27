@@ -26,7 +26,7 @@ class CurrentPaymentManager(models.Manager):
                .get_query_set() \
                .filter(is_current=True)
 
-    def fetch_xml(self, session_id):
+    def rpc(self, session_id, method):
         ts = gen_ts()
         data = {
             'pos_id': str(conf.POS_ID),
@@ -40,10 +40,10 @@ class CurrentPaymentManager(models.Manager):
             + conf.KEY1).hexdigest()
 
         return urllib2.urlopen(
-            conf.ENDPOINT+'Payment/get/xml',
+            '%sPayment/%s/xml' % (conf.ENDPOINT, method),
             urllib.urlencode(data)).read()
 
-    def update(self, session_id=None, instance=None, xml=None, save=True):
+    def reload(self, session_id=None, instance=None, xml=None, save=True):
         assert bool(session_id) <> bool(instance) # poor man's xor
 
         if session_id:
@@ -55,7 +55,7 @@ class CurrentPaymentManager(models.Manager):
             session_id = instance.session_id
 
         if xml is None:
-            xml = self.fetch_xml(session_id)
+            xml = self.rpc(session_id, 'get')
         et = ET.fromstring(xml)
 
         assert et[0].text == 'OK'       # FIXME
@@ -63,7 +63,8 @@ class CurrentPaymentManager(models.Manager):
         def _f(path):
             f = et[1].find(path)
             if f is not None:
-                return f.text
+                return f.text or None
+        print self.model
         rv = self.model(
             transaction_id = _f('id'),
             pos_id = _f('pos_id'),
@@ -174,9 +175,36 @@ class Payment(models.Model):
     def check_signature(self):
         assert self.sig == self.get_signature()
 
-    def update(self, save=True):
-        return self.objects.update(instance=self, save=save)[0]
+    def reload(self, save=True):
+        return self.__class__.objects.reload(instance=self, save=save)[0]
 
+    def rpc(self, method):
+        return self.__class__.objects.rpc(self.session_id, method)
+
+    def _confirm_or_cancel(self, method, reload):
+        assert self.status == constants.STATE_WAITING_FOR_ACCEPT
+
+        et = ET.fromstring(self.rpc('confirm'))
+        return et
+        assert et[0].text == 'OK'       # FIXME: handle errors
+
+        assert et[1].find('pos_id') == self.pos_id
+        assert et[1].find('session_id') == self.session_id
+        assert hashlib.md5(''.join(
+            str(self.pos_id),
+            self.session_id,
+            et[1].find('ts'),
+            conf.KEY2,
+            )).hexdigest() == et[1].find('sig')
+
+        if reload:
+            return self.reload()
+
+    def do_confirm(self, reload=True):
+        return self._confirm_or_cancel('confirm', reload)
+
+    def do_cancel(self, reload=True):
+        return self._confirm_or_cancel('cancel', reload)
 
 def get_order_model():
     if conf.ORDER_MODEL:
