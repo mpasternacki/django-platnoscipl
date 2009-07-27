@@ -88,7 +88,7 @@ STATUS_NEW = 1
 STATUS_CANCELLED = 2
 STATUS_REJECTED = 3
 STATUS_OPEN = 4
-STATUS_WAITING_FOR_ACCEPT = 5
+STATUS_PENDING = 5
 STATUS_PAYMENT_REJECTED = 7
 STATUS_CONFIRMED = 99
 STATUS_ERROR = 888
@@ -98,7 +98,7 @@ STATUS_NAMES = {
     STATUS_CANCELLED: u"anulowana",
     STATUS_REJECTED: u"odrzucona",
     STATUS_OPEN: u"rozpoczęta",
-    STATUS_WAITING_FOR_ACCEPT: u"oczekuje na odbiór",
+    STATUS_PENDING: u"oczekuje na odbiór",
     STATUS_PAYMENT_REJECTED: u"płatność odrzucona",
     STATUS_CONFIRMED: u"płatność odebrana - zakończona",
     STATUS_ERROR: u"błędny status - prosimy o kontakt",

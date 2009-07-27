@@ -185,7 +185,7 @@ class Payment(models.Model):
         return self.__class__.objects.rpc(self.session_id, method)
 
     def _confirm_or_cancel(self, method, reload):
-        assert self.status == constants.STATUS_WAITING_FOR_ACCEPT
+        assert self.status == constants.STATUS_PENDING
 
         et = ET.fromstring(self.rpc('confirm'))
         assert et[0].text == 'OK'       # FIXME: handle errors
