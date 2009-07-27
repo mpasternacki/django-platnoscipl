@@ -46,8 +46,6 @@ def notification_handler(request):
     if request.method <> 'POST':
         return HttpResponseForbidden()
 
-    print request.POST
-
     # FIXME: do something sensible
     assert int(request.POST['pos_id']) == int(conf.POS_ID)
     assert request.POST['sig'] == hashlib.md5('%s%s%s%s' % (
